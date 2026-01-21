@@ -32,19 +32,29 @@ plt.tight_layout()
 plt.savefig("scores_by_dept.png", dpi=150)
 plt.close()
 
-# 5. 円グラフ：所属ごとの参加者数
+# 5. 円グラフ：所属ごとの参加者数（人数＋割合、全体人数入り）
 counts = df[dept_col].value_counts().reset_index()
 counts.columns = [dept_col, "count"]
+
+total = counts["count"].sum()
+
+def autopct_with_count(pct):
+    count = int(round(pct * total / 100.0))
+    return f"{pct:.1f}%\n({count}人)"
+
 plt.figure(figsize=(6, 6))
-plt.pie(counts["count"],
-        labels=counts[dept_col],
-        autopct="%1.1f%%",
-        startangle=90,
-        counterclock=False)
-plt.title("所属ごとの参加者数")
+plt.pie(
+    counts["count"],
+    labels=counts[dept_col],
+    autopct=autopct_with_count,
+    startangle=90,
+    counterclock=False
+)
+plt.title(f"所属ごとの参加者数（全体：{total}人）")
 plt.tight_layout()
 plt.savefig("participants_pie.png", dpi=150)
 plt.close()
+
 
 # 6. ヒストグラム：全参加者のスコア分布
 bins = [70, 75, 80, 85, 90, 95, 100]
